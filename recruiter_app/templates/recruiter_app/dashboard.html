@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recruiter Dashboard</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif; }
+    body { min-height:100vh; background:linear-gradient(135deg,#87ceeb,#b0e0e6); }
+
+    .glass-nav { width:100%; position:fixed; top:0; left:0; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.5); box-shadow:0 8px 20px rgba(0,0,0,0.12); z-index:100; }
+    .nav-title { font-size:18px; color:#1f3c4d; font-weight:600; }
+    .nav-actions { display:flex; gap:12px; align-items:center; }
+    .nav-actions a { text-decoration:none; color:#1f3c4d; padding:8px 16px; border-radius:8px; background:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.4); transition:0.3s ease; font-size:14px; }
+    .nav-actions a:hover { background:rgba(31,140,190,0.25); transform:translateY(-2px); }
+    .nav-actions a.btn-post { background:rgba(31,140,190,0.85); color:#fff; border-color:transparent; }
+    .nav-actions a.btn-post:hover { background:rgba(31,140,190,1); }
+
+    .content { padding:110px 50px 40px; }
+
+    .welcome-card { max-width:700px; margin:0 auto 40px; padding:30px; text-align:center; background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-radius:20px; box-shadow:0 12px 30px rgba(0,0,0,0.15); animation:fadeUp 1s ease; }
+    .welcome-card h1 { color:#1f3c4d; font-weight:500; margin-bottom:5px; }
+    .welcome-card p { color:#1f3c4d; opacity:0.7; font-size:14px; }
+
+    .stats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; max-width:700px; margin:0 auto; }
+    .stat-card { background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-radius:16px; padding:25px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,0.12); animation:fadeUp 1s ease; transition:0.3s; }
+    .stat-card:hover { transform:translateY(-4px); }
+    .stat-number { font-size:36px; font-weight:700; color:#1f8cbe; }
+    .stat-label { font-size:13px; color:#1f3c4d; margin-top:6px; opacity:0.8; }
+
+    .quick-actions { display:flex; justify-content:center; gap:15px; margin-top:30px; max-width:700px; margin-left:auto; margin-right:auto; flex-wrap:wrap; }
+    .action-btn { padding:12px 24px; border-radius:10px; text-decoration:none; font-size:14px; font-weight:500; transition:0.3s; }
+    .action-btn.primary { background:rgba(31,140,190,0.85); color:#fff; }
+    .action-btn.primary:hover { background:rgba(31,140,190,1); transform:translateY(-2px); }
+    .action-btn.secondary { background:rgba(255,255,255,0.4); color:#1f3c4d; border:1px solid rgba(31,60,77,0.2); }
+    .action-btn.secondary:hover { background:rgba(255,255,255,0.7); transform:translateY(-2px); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(25px);} to{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+
+  <nav class="glass-nav">
+    <div class="nav-title">Recruiter Dashboard</div>
+    <div class="nav-actions">
+      <a href="{% url 'my_jobs' %}">My Jobs</a>
+      <a href="{% url 'applied_job' %}">Applications</a>
+      <a href="{% url 'recruiter_profile' %}">Profile</a>
+      <a href="{% url 'job_details' %}" class="btn-post">+ Post Job</a>
+      <a href="{% url 'recruiter_logout' %}">Logout</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <div class="welcome-card">
+      <h1>Welcome back, {{ username }}!</h1>
+      <p>Manage your job postings and review applications below.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number">{{ total_jobs }}</div>
+        <div class="stat-label">Jobs Posted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">{{ total_applications }}</div>
+        <div class="stat-label">Total Applications</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color:#27ae60;">{{ approved_count }}</div>
+        <div class="stat-label">Approved</div>
+      </div>
+    </div>
+
+    <div class="quick-actions" style="margin-top:30px;">
+      <a href="{% url 'job_details' %}" class="action-btn primary">Post a New Job</a>
+      <a href="{% url 'applied_job' %}" class="action-btn secondary">Review Applications</a>
+      <a href="{% url 'my_jobs' %}" class="action-btn secondary">Manage My Jobs</a>
+    </div>
+  </div>
+
+</body>
+</html>

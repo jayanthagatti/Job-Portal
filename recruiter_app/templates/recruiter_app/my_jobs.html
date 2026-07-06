@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Job Postings</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif; }
+    body { min-height:100vh; background:linear-gradient(135deg,#87ceeb,#b0e0e6); }
+
+    .glass-nav { width:100%; position:fixed; top:0; left:0; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.5); box-shadow:0 8px 20px rgba(0,0,0,0.12); z-index:100; }
+    .nav-title { font-size:18px; color:#1f3c4d; font-weight:600; }
+    .nav-actions { display:flex; gap:12px; }
+    .nav-actions a { text-decoration:none; color:#1f3c4d; padding:8px 16px; border-radius:8px; background:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.4); transition:0.3s; font-size:14px; }
+    .nav-actions a:hover { background:rgba(31,140,190,0.25); }
+    .nav-actions a.btn-post { background:rgba(31,140,190,0.85); color:#fff; border-color:transparent; }
+
+    .content { padding:110px 50px 40px; }
+    h1 { text-align:center; margin-bottom:8px; color:#1f3c4d; }
+    .subtitle { text-align:center; color:#1f3c4d; opacity:0.65; font-size:14px; margin-bottom:35px; }
+
+    .jobs-list { display:grid; gap:18px; max-width:900px; margin:0 auto; }
+    .job-row { background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-radius:16px; padding:22px 28px; box-shadow:0 8px 20px rgba(0,0,0,0.12); display:flex; justify-content:space-between; align-items:center; gap:20px; animation:fadeUp 0.8s ease; transition:0.3s; }
+    .job-row:hover { transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,0.18); }
+    .job-info h3 { color:#1f3c4d; font-size:17px; margin-bottom:4px; }
+    .job-info .tags { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+    .tag { padding:3px 10px; border-radius:20px; font-size:12px; background:rgba(31,140,190,0.15); color:#1f3c4d; }
+    .job-meta { font-size:12px; color:#1f3c4d; opacity:0.65; margin-top:4px; }
+    .job-actions { display:flex; gap:10px; flex-shrink:0; }
+    .btn { padding:9px 18px; border-radius:8px; font-size:13px; text-decoration:none; transition:0.3s; cursor:pointer; border:none; }
+    .btn-danger { background:rgba(231,76,60,0.15); color:#c0392b; border:1px solid rgba(231,76,60,0.3); }
+    .btn-danger:hover { background:rgba(231,76,60,0.3); }
+
+    .empty-state { text-align:center; padding:80px 20px; color:#1f3c4d; opacity:0.7; }
+    .empty-state a { color:#1f8cbe; text-decoration:none; font-weight:600; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+
+  <nav class="glass-nav">
+    <div class="nav-title">My Job Postings</div>
+    <div class="nav-actions">
+      <a href="{% url 'recruiter_dashboard' %}">← Dashboard</a>
+      <a href="{% url 'job_details' %}" class="btn-post">+ Post New Job</a>
+    </div>
+  </nav>
+
+  <div class="content">
+    <h1>My Job Postings</h1>
+    <p class="subtitle">{{ jobs|length }} job{{ jobs|length|pluralize }} posted</p>
+
+    {% if jobs %}
+      <div class="jobs-list">
+        {% for job in jobs %}
+        <div class="job-row">
+          <div class="job-info">
+            <h3>{{ job.job_role }} — {{ job.company_name }}</h3>
+            <div class="tags">
+              <span class="tag">📍 {{ job.job_location }}</span>
+              <span class="tag">💼 {{ job.employment_type }}</span>
+              <span class="tag">💰 {{ job.salary_range }}</span>
+            </div>
+            <p class="job-meta">Posted: {{ job.job_posted_on }} &nbsp;|&nbsp; Closing: {{ job.last_date }} &nbsp;|&nbsp; Vacancies: {{ job.vacancy }}</p>
+          </div>
+          <div class="job-actions">
+            <a href="{% url 'delete_job' job.id %}" class="btn btn-danger" onclick="return confirm('Delete this job posting?')">Delete</a>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>No jobs posted yet</h3>
+        <p><a href="{% url 'job_details' %}">Post your first job →</a></p>
+      </div>
+    {% endif %}
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Candidate Dashboard</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif; }
+    body { min-height:100vh; background:linear-gradient(135deg,#87ceeb,#b0e0e6); }
+
+    .glass-nav { width:100%; position:fixed; top:0; left:0; padding:15px 40px; display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-bottom:1px solid rgba(255,255,255,0.5); box-shadow:0 8px 20px rgba(0,0,0,0.12); z-index:100; }
+    .nav-title { font-size:18px; color:#1f3c4d; font-weight:600; }
+    .nav-actions { display:flex; gap:12px; align-items:center; }
+    .nav-actions a { text-decoration:none; color:#1f3c4d; padding:8px 16px; border-radius:8px; background:rgba(255,255,255,0.3); border:1px solid rgba(255,255,255,0.4); transition:0.3s ease; font-size:14px; }
+    .nav-actions a:hover { background:rgba(31,140,190,0.25); transform:translateY(-2px); }
+
+    .container { padding:110px 50px 40px; }
+
+    .welcome-card { max-width:700px; margin:0 auto 30px; padding:25px 30px; text-align:center; background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-radius:20px; box-shadow:0 12px 30px rgba(0,0,0,0.15); animation:fadeUp 1s ease; }
+    .welcome-card h1 { color:#1f3c4d; font-weight:500; margin-bottom:18px; }
+
+    /* Search bar */
+    .search-form { display:flex; gap:10px; max-width:500px; margin:0 auto; }
+    .search-form input { flex:1; padding:10px 16px; border-radius:10px; border:1px solid rgba(31,60,77,0.25); background:rgba(255,255,255,0.7); font-size:14px; color:#1f3c4d; outline:none; transition:0.3s; }
+    .search-form input:focus { background:rgba(255,255,255,0.9); box-shadow:0 0 10px rgba(31,60,77,0.2); }
+    .search-form button { padding:10px 20px; border:none; border-radius:10px; background:rgba(31,140,190,0.85); color:#fff; font-size:14px; cursor:pointer; transition:0.3s; white-space:nowrap; }
+    .search-form button:hover { background:rgba(31,140,190,1); }
+    .search-clear { color:#1f8cbe; text-decoration:none; font-size:13px; margin-top:8px; display:inline-block; }
+
+    .results-info { text-align:center; color:#1f3c4d; font-size:14px; margin-bottom:20px; opacity:0.8; }
+
+    /* Job cards */
+    .job-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:25px; margin-top:10px; }
+    .job-card { padding:25px; background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-radius:18px; border:1px solid rgba(255,255,255,0.45); box-shadow:0 10px 25px rgba(0,0,0,0.15); transition:0.4s ease; animation:fadeUp 0.8s ease; display:flex; flex-direction:column; }
+    .job-card:hover { transform:translateY(-6px); box-shadow:0 18px 40px rgba(0,0,0,0.2); }
+    .job-card h2 { color:#1f3c4d; font-size:17px; margin-bottom:6px; }
+    .job-card h4 { color:#1f8cbe; font-weight:500; margin-bottom:10px; font-size:15px; }
+    .job-card p { color:#1f3c4d; font-size:13px; margin-bottom:6px; }
+    .card-footer { margin-top:auto; padding-top:15px; display:flex; gap:10px; }
+    .btn { flex:1; padding:9px; border:none; border-radius:8px; font-size:13px; cursor:pointer; transition:0.3s ease; text-align:center; text-decoration:none; display:block; }
+    .btn-view { background:rgba(31,140,190,0.85); color:#fff; }
+    .btn-view:hover { background:rgba(31,140,190,1); }
+    .btn-applied { background:rgba(46,204,113,0.2); color:#27ae60; border:1px solid rgba(46,204,113,0.4); cursor:default; font-weight:600; }
+
+    .no-jobs { text-align:center; padding:60px 20px; color:#1f3c4d; opacity:0.7; }
+    .no-jobs h3 { font-size:20px; margin-bottom:10px; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(25px);} to{opacity:1;transform:translateY(0);} }
+  </style>
+</head>
+<body>
+
+  <nav class="glass-nav">
+    <div class="nav-title">JobPortal</div>
+    <div class="nav-actions">
+      <a href="{% url 'result' %}">My Applications</a>
+      <a href="{% url 'candidate_profile' %}">Profile</a>
+      <a href="{% url 'candidate_logout' %}">Logout</a>
+    </div>
+  </nav>
+
+  <div class="container">
+
+    <div class="welcome-card">
+      <h1>Welcome, {{ username }} 👋</h1>
+      <form class="search-form" method="GET" action="">
+        <input type="text" name="search" placeholder="Search by role, company, location, skills..." value="{{ search_query }}">
+        <button type="submit">Search</button>
+      </form>
+      {% if search_query %}
+        <a class="search-clear" href="{% url 'candidate_dashboard' %}">✕ Clear search</a>
+      {% endif %}
+    </div>
+
+    {% if search_query %}
+      <p class="results-info">Showing results for "<strong>{{ search_query }}</strong>"</p>
+    {% endif %}
+
+    {% if a %}
+      <div class="job-grid">
+        {% for i in a %}
+        <div class="job-card">
+          <h2>{{ i.company_name }}</h2>
+          <h4>{{ i.job_role }}</h4>
+          <p>📍 {{ i.job_location }}</p>
+          <p>💼 {{ i.employment_type }}</p>
+          <p>💰 {{ i.salary_range }}</p>
+          <p>📅 Last date: {{ i.last_date }}</p>
+          <div class="card-footer">
+            <a href="{% url 'view_detail' i.id %}" class="btn btn-view">View Details</a>
+            {% if i.id in applied_job_ids %}
+              <span class="btn btn-applied">✓ Applied</span>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="no-jobs">
+        <h3>No jobs found</h3>
+        <p>{% if search_query %}Try a different search term.{% else %}No job listings available yet.{% endif %}</p>
+      </div>
+    {% endif %}
+
+  </div>
+</body>
+</html>

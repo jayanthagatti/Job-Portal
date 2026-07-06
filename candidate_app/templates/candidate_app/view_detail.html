@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ job.job_role }} – {{ job.company_name }}</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:"Segoe UI",sans-serif; }
+    body { min-height:100vh; background:linear-gradient(135deg,#87ceeb,#b0e0e6); padding:30px 60px 60px; }
+    .back-link { display:inline-block; margin-bottom:20px; color:#1f3c4d; text-decoration:none; font-size:14px; opacity:0.8; transition:0.2s; }
+    .back-link:hover { opacity:1; }
+    .container { display:grid; grid-template-columns:2.5fr 1.5fr; gap:30px; animation:fadeUp 1s ease; }
+    .glass { background:rgba(255,255,255,0.35); backdrop-filter:blur(16px); border-radius:20px; padding:35px; box-shadow:0 12px 30px rgba(0,0,0,0.15); }
+    .details h1 { font-size:26px; margin-bottom:12px; color:#1f3c4d; }
+    .tags { margin-bottom:16px; display:flex; flex-wrap:wrap; gap:8px; }
+    .tag { padding:5px 14px; background:rgba(31,140,190,0.2); border-radius:20px; font-size:13px; color:#1f3c4d; }
+    .tag.highlight { background:rgba(31,140,190,0.4); font-weight:600; }
+    .details p { margin:7px 0; font-size:14px; line-height:1.6; color:#1f3c4d; }
+    .section-title { margin-top:22px; margin-bottom:8px; font-size:16px; font-weight:600; color:#1f3c4d; border-bottom:2px solid rgba(31,140,190,0.35); padding-bottom:5px; display:inline-block; }
+    .apply-btn { margin-top:25px; padding:14px; width:100%; border:none; border-radius:10px; background:#1f8cbe; color:#fff; font-size:16px; cursor:pointer; transition:0.3s; }
+    .apply-btn:hover { transform:translateY(-2px); background:#1a7aa8; }
+    .applied-badge { margin-top:25px; padding:14px; width:100%; border-radius:10px; background:rgba(46,204,113,0.2); color:#27ae60; font-size:15px; text-align:center; font-weight:600; border:1px solid rgba(46,204,113,0.4); }
+    .side img.company { width:100%; height:220px; object-fit:contain; border-radius:12px; background:#fff; padding:15px; margin-bottom:15px; }
+    .recruiter { text-align:center; margin-top:20px; }
+    .recruiter img { width:100px; height:100px; border-radius:50%; object-fit:cover; box-shadow:0 8px 20px rgba(0,0,0,0.2); margin-bottom:10px; }
+    .recruiter-avatar { width:100px; height:100px; border-radius:50%; background:rgba(31,140,190,0.15); display:flex; justify-content:center; align-items:center; margin:0 auto 10px; font-size:40px; }
+    .recruiter h3 { font-size:16px; color:#1f3c4d; margin-bottom:8px; }
+    .recruiter p { font-size:13px; color:#1f3c4d; margin-bottom:4px; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(40px);} to{opacity:1;transform:translateY(0);} }
+    @media(max-width:900px) { .container{grid-template-columns:1fr;} body{padding:20px;} }
+  </style>
+</head>
+<body>
+
+<a href="{% url 'candidate_dashboard' %}" class="back-link">← Back to Jobs</a>
+
+<div class="container">
+
+  <div class="glass details">
+    <h1>{{ job.company_name }}</h1>
+    <div class="tags">
+      <span class="tag highlight">{{ job.job_role }}</span>
+      <span class="tag">{{ job.employment_type }}</span>
+      <span class="tag">📍 {{ job.job_location }}</span>
+      <span class="tag">🏭 {{ job.industry_type }}</span>
+    </div>
+    <p><strong>Vacancy:</strong> {{ job.vacancy }}</p>
+    <p><strong>Experience:</strong> {{ job.experience_rqeuired }}</p>
+    <p><strong>Salary:</strong> {{ job.salary_range }}</p>
+    <p><strong>Posted:</strong> {{ job.job_posted_on }} &nbsp;|&nbsp; <strong>Last Date:</strong> {{ job.last_date }}</p>
+
+    <h2 class="section-title">Job Description</h2>
+    <p>{{ job.job_decription }}</p>
+
+    <h2 class="section-title">Skills Required</h2>
+    <p>{{ job.skills_required }}</p>
+
+    <h2 class="section-title">Qualification</h2>
+    <p>{{ job.qualifications }}</p>
+
+    <h2 class="section-title">Hiring Process</h2>
+    <p>{{ job.hiring_process }}</p>
+
+    {% if already_applied %}
+      <div class="applied-badge">✓ You have already applied for this position</div>
+    {% else %}
+      <a href="{% url 'apply_job' job.id %}">
+        <button class="apply-btn">Apply Now</button>
+      </a>
+    {% endif %}
+  </div>
+
+  <div class="glass side">
+    {% if job.company_image %}
+      <img class="company" src="{{ job.company_image.url }}" alt="{{ job.company_name }}">
+    {% endif %}
+    <p><strong>Address:</strong> {{ job.company_address }}</p>
+
+    <div class="recruiter">
+      <h3>Posted By</h3>
+      {% if recruiter_detail and recruiter_detail.profile_pic %}
+        <img src="{{ recruiter_detail.profile_pic.url }}" alt="{{ recruiter.name }}">
+      {% else %}
+        <div class="recruiter-avatar">👤</div>
+      {% endif %}
+      <p><strong>{{ recruiter.name }}</strong></p>
+      <p>{{ recruiter.email }}</p>
+      <p>{{ recruiter.phone }}</p>
+      {% if recruiter_detail %}
+        <p>{{ recruiter_detail.city }}{% if recruiter_detail.city and recruiter_detail.state %}, {% endif %}{{ recruiter_detail.state }}</p>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
